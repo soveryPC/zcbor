@@ -149,8 +149,12 @@ static bool value_extract(zcbor_state_t *state,
 		endian_copy(result_offs, state->payload + 1, len);
 
 #ifdef ZCBOR_CANONICAL
-		ZCBOR_ERR_IF((zcbor_header_len_ptr(result, result_len) != (len + 1)),
-			ZCBOR_ERR_INVALID_VALUE_ENCODING);
+		uint8_t header_byte = *state->payload;
+		if (!ZCBOR_IS_FLOAT(header_byte))
+		{
+			ZCBOR_ERR_IF((zcbor_header_len_ptr(result, result_len) != (len + 1)),
+						 ZCBOR_ERR_INVALID_VALUE_ENCODING);
+		}
 #endif
 	}
 
